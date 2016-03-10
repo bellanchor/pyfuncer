@@ -47,6 +47,7 @@ Let's take *fin_model* as an example. Don't bother yourself with the name, it's 
     python funcer.py fin_model > test.py
     ```
     也可把funcer.py放进linux下$PATH目录下，并添加可执行权限，随处可用
+
     test.py will look like
     ```
     def calc_a(b, c):
