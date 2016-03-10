@@ -5,6 +5,13 @@ import re
 
 import yaml
 
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
 class FuncMaker(object):
 
     def __init__(self, mp):
@@ -12,8 +19,7 @@ class FuncMaker(object):
         '''
         self._func_pre = 'calc_'
         self._mp = mp
-        self._split_pattern = re.compile(r'[-+*/()\d]')
-        self._param_pattern = re.compile(r'([^-+*/()\d ]+)')
+        self._param_pattern = re.compile(r'([^-+*/(),<=> ]+)')
     
     def make(self, string):
         self._str = string
@@ -33,13 +39,19 @@ class FuncMaker(object):
         _expression: right part in equation 
         '''
         self._func_name_key, self._expression = [
-                i.strip() for i in self._str.split(delim)]
+                i.strip() for i in self._str.split(delim, 1)]
+
+    @staticmethod
+    def _is_py(s):
+        if s.startswith('$'):
+            return True
+        return False
 
     def _find_params(self):
         params = []
-        for key in re.split(self._split_pattern, self._expression):
+        for key in re.findall(self._param_pattern, self._expression):
             key = key.strip()
-            if not key:
+            if not key or is_number(key) or self._is_py(key):
                 continue
 
             param = self._mp[key]
@@ -50,11 +62,19 @@ class FuncMaker(object):
 
         return params
             
+    def _sub_replace(self, s):
+        m = s.group()
+        if self._is_py(m):
+            return m[1:]
+        elif is_number(m):
+            return m
+
+        return self._mp[m]
     
     def _make_expression(self):
         return re.sub(
                 self._param_pattern, 
-                lambda x: self._mp[x.group()],
+                self._sub_replace,
                 self._expression,
                 re.X)
 
