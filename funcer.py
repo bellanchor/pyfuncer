@@ -29,8 +29,8 @@ class FuncMaker(object):
 
     def _split_lr(self, delim='='):
         '''
-        _func_name_key: left part in expression
-        _expression: right part in expression
+        _func_name_key: left part in equation
+        _expression: right part in equation 
         '''
         self._func_name_key, self._expression = [
                 i.strip() for i in self._str.split(delim)]
