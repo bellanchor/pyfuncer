@@ -1,4 +1,3 @@
-#!/home/lds/Envs/chongqing/bin/python
 # -*- coding: utf-8 -*-
 import os
 import sys
